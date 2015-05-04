@@ -1,16 +1,16 @@
 <?php
 
-namespace perf\Http;
+namespace perf\Http\Client;
 
 /**
- *
+ * cURL client throwing exceptions when cURL operations fail to execute.
  *
  */
 class CurlClient
 {
 
     /**
-     * Object-oriented cURL wrapper.
+     * Low-level object-oriented cURL wrapper.
      *
      * @var CurlWrapper
      */
@@ -24,6 +24,16 @@ class CurlClient
     public function __construct()
     {
         $this->setCurlWrapper(new CurlWrapper());
+    }
+
+    /**
+     * Clone constructor.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        $this->curlWrapper = clone $this->curlWrapper;
     }
 
     /**
@@ -112,15 +122,5 @@ class CurlClient
     public function getErrorNumber()
     {
         return $this->curlWrapper->getErrorNumber();
-    }
-
-    /**
-     * Copy a cURL handle along with all of its preferences.
-     *
-     * @return void
-     */
-    public function __clone()
-    {
-        $this->curlWrapper = clone $this->curlWrapper;
     }
 }

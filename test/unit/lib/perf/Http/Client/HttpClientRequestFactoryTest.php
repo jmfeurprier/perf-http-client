@@ -1,6 +1,6 @@
 <?php
 
-namespace perf\Http;
+namespace perf\Http\Client;
 
 /**
  *

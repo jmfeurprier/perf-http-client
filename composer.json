@@ -18,7 +18,7 @@
 	},
 	"autoload" : {
 		"psr-4" : {
-			"perf\\Http\\" : "lib/perf/Http/"
+			"perf\\Http\\Client\\" : "lib/perf/Http/Client/"
 		}
 	}
 }

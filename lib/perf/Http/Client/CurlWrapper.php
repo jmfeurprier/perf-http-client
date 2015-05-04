@@ -1,9 +1,9 @@
 <?php
 
-namespace perf\Http;
+namespace perf\Http\Client;
 
 /**
- * Object-oriented wrapper for PHP cURL functions.
+ * Low-level object-oriented wrapper for PHP cURL functions.
  *
  */
 class CurlWrapper
