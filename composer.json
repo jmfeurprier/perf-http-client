@@ -5,7 +5,7 @@
 	"description" : "Allows to execute HTTP queries.",
 	"require"     : {
 		"php"      : ">=5.3.3",
-        "ext-curl" : "*"
+		"ext-curl" : "*"
 	},
 	"require-dev": {
 		"ext-xdebug"                : "~2.1",
