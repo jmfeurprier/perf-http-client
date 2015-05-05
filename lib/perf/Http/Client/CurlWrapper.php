@@ -95,6 +95,10 @@ class CurlWrapper
      */
     public function getInfo($option = 0)
     {
+        if (0 === $option) {
+            return curl_getinfo($this->curl);
+        }
+
         return curl_getinfo($this->curl, $option);
     }
 

@@ -12,73 +12,66 @@ class HttpClient
     /**
      *
      *
-     * @var HttpClientRequestFactory
+     * @var HttpRequestFactory
      */
     private $requestFactory;
 
     /**
      *
      *
-     * @var HttpClientResponseFactory
+     * @var HttpResponseFactory
      */
     private $responseFactory;
 
     /**
      *
      *
-     * @var CurlClientFactory
+     * @var CurlExecuter
      */
-    private $curlClientFactory;
+    private $curlExecuter;
+
+    /**
+     *
+     *
+     * @return HttpClient
+     */
+    public static function createDefault()
+    {
+        return self::createBuilder()->build();
+    }
+
+    /**
+     *
+     *
+     * @return HttpClientBuilder
+     */
+    public static function createBuilder()
+    {
+        return new HttpClientBuilder();
+    }
 
     /**
      * Constructor.
      *
+     * @param HttpRequestFactory $requestFactory
+     * @param HttpResponseFactory $responseFactory
+     * @param CurlExecuter $curlExecuter
      * @return void
      */
-    public function __construct()
-    {
-        $this->setRequestFactory(new HttpClientRequestFactory());
-        $this->setResponseFactory(new HttpClientResponseFactory());
-        $this->setCurlClientFactory(new CurlClientFactory());
+    public function __construct(
+        HttpRequestFactory $requestFactory,
+        HttpResponseFactory $responseFactory,
+        CurlExecuter $curlExecuter
+    ) {
+        $this->requestFactory  = $requestFactory;
+        $this->responseFactory = $responseFactory;
+        $this->curlExecuter    = $curlExecuter;
     }
 
     /**
      *
      *
-     * @param HttpClientRequestFactory $factory
-     * @return void
-     */
-    public function setRequestFactory(HttpClientRequestFactory $factory)
-    {
-        $this->requestFactory = $factory;
-    }
-
-    /**
-     *
-     *
-     * @param HttpClientResponseFactory $factory
-     * @return void
-     */
-    public function setResponseFactory(HttpClientResponseFactory $factory)
-    {
-        $this->responseFactory = $factory;
-    }
-
-    /**
-     *
-     *
-     * @param CurlClientFactory $factory
-     * @return void
-     */
-    public function setCurlClientFactory(CurlClientFactory $factory)
-    {
-        $this->curlClientFactory = $factory;
-    }
-
-    /**
-     *
-     *
-     * @return HttpClientRequest
+     * @return HttpRequest
      */
     public function createRequest()
     {
@@ -88,27 +81,62 @@ class HttpClient
     /**
      *
      *
-     * @param HttpClientRequest $request
-     * @return HttpClientResponse
+     * @param HttpRequest $request
+     * @return HttpResponse
      * @throws \RuntimeException
      */
-    public function execute(HttpClientRequest $request)
+    public function execute(HttpRequest $request)
     {
-        $curlClient = $this->curlClientFactory->create();
+        $result = $this->getResult($request);
 
-        $curlClient->setOptions($request->getOptions());
+        $httpStatus = $result->getInfo('http_code');
 
-        try {
-            $content = $curlClient->execute();
-        } catch (\RuntimeException $e) {
-            $errorMessage = $curlClient->getError();
+        $options    = $request->getOptions();
+        $withHeader = (array_key_exists(\CURLOPT_HEADER, $options) && $options[\CURLOPT_HEADER]);
+        $withBody   = !(array_key_exists(\CURLOPT_NOBODY, $options) && $options[\CURLOPT_NOBODY]);
 
-            throw new \RuntimeException("Failed to execute HTTP request: {$errorMessage}.", 0, $e);
+        $headers     = array();
+        $bodyContent = '';
+
+        if ($withHeader && $withBody) {
+            $responseContent = $result->getResponseContent();
+            $position = strpos($responseContent, "\r\n\r\n", 0);
+            
+            if (false === $position) {
+                throw new \RuntimeException();
+            }
+            
+            $headerContent = substr($responseContent, 0, $position);
+            $headers       = explode("\r\n", $headerContent);
+            $bodyContent   = substr($responseContent, $position + 4);
+        } elseif ($withHeader) {
+            $headerContent = $result->getResponseContent();
+            $headers       = explode("\r\n", $headerContent);
+        } elseif ($withBody) {
+            $bodyContent = $result->getResponseContent();
         }
 
-        $httpStatus   = $curlClient->getInfo(\CURLINFO_HTTP_CODE);
-        $effectiveUrl = $curlClient->getInfo(\CURLINFO_EFFECTIVE_URL);
+        return $this->responseFactory->create($httpStatus, $headers, $bodyContent);
+    }
 
-        return $this->responseFactory->create($effectiveUrl, $httpStatus, $content);
+    /**
+     *
+     *
+     * @param HttpRequest $request
+     * @return CurlExecutionResult
+     * @throws \RuntimeException
+     */
+    private function getResult(HttpRequest $request)
+    {
+        $options = $request->getOptions();
+        $options[\CURLOPT_RETURNTRANSFER] = true;
+    
+        try {
+            $result = $this->curlExecuter->execute($options);
+        } catch (CurlExecutionException $e) {
+            throw new \RuntimeException("Failed to execute HTTP request. << {$e->getMessage()}", 0, $e);
+        }
+
+        return $result;
     }
 }

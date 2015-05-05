@@ -6,16 +6,16 @@ namespace perf\Http\Client;
  *
  *
  */
-class CurlClientFactory
+class HttpRequestFactory
 {
 
     /**
-     * Returns a new cURL client.
      *
-     * @return CurlClient
+     *
+     * @return HttpRequest
      */
     public function create()
     {
-        return new CurlClient();
+        return new HttpRequest();
     }
 }

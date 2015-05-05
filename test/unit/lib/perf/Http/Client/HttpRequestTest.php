@@ -5,7 +5,7 @@ namespace perf\Http\Client;
 /**
  *
  */
-class HttpClientRequestTest extends \PHPUnit_Framework_TestCase
+class HttpRequestTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -23,7 +23,7 @@ class HttpClientRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetOptionsWillReturnArray()
     {
-        $request = new HttpClientRequest();
+        $request = new HttpRequest();
 
         $result = $request->getOptions();
 
@@ -38,7 +38,7 @@ class HttpClientRequestTest extends \PHPUnit_Framework_TestCase
         $option = 123;
         $value  = 'bar';
 
-        $request = new HttpClientRequest();
+        $request = new HttpRequest();
 
         $request->setOption($option, $value);
 
@@ -57,7 +57,7 @@ class HttpClientRequestTest extends \PHPUnit_Framework_TestCase
     {
         $url = 'foo';
 
-        $request = new HttpClientRequest();
+        $request = new HttpRequest();
 
         $request->setUrl($url);
 
