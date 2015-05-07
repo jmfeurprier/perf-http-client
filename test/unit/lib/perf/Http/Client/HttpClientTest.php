@@ -17,7 +17,7 @@ class HttpClientTest extends \PHPUnit_Framework_TestCase
 
         $this->responseFactory = $this->getMock('\\perf\\Http\\Client\\HttpResponseFactory');
 
-        $this->curlExecuter = $this->getMockBuilder('\\perf\\Http\\Client\\CurlExecuter')
+        $this->curlExecuter = $this->getMockBuilder('\\perf\\Http\\Curl\\CurlExecuter')
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -58,7 +58,7 @@ class HttpClientTest extends \PHPUnit_Framework_TestCase
             \CURLOPT_RETURNTRANSFER => true,
         );
 
-        $curlExecutionResult = $this->getMockBuilder('\\perf\\Http\\Client\\CurlExecutionResult')->disableOriginalConstructor()->getMock();
+        $curlExecutionResult = $this->getMockBuilder('\\perf\\Http\\Curl\\CurlExecutionResult')->disableOriginalConstructor()->getMock();
 
         $this->curlExecuter->expects($this->once())->method('execute')->with($expectedOptions)->will($this->returnValue($curlExecutionResult));
 
@@ -86,14 +86,13 @@ class HttpClientTest extends \PHPUnit_Framework_TestCase
             \CURLOPT_RETURNTRANSFER => true,
         );
 
-        $exception = $this->getMockBuilder('\\perf\\Http\\Client\\CurlExecutionException')->disableOriginalConstructor()->getMock();
+        $exception = $this->getMockBuilder('\\perf\\Http\\Curl\\CurlExecutionException')->disableOriginalConstructor()->getMock();
 
         $this->curlExecuter->expects($this->once())->method('execute')->with($this->equalTo($expectedOptions))->will($this->throwException($exception));
 
         $request = $this->getMock('\\perf\\Http\\Client\\HttpRequest');
         $request->expects($this->atLeastOnce())->method('getOptions')->will($this->returnValue($options));
 
-        #$this->setExpectedException('\\RuntimeException', "Failed to execute HTTP request: {$error}.");
         $this->setExpectedException('\\RuntimeException');
 
         $this->client->execute($request);

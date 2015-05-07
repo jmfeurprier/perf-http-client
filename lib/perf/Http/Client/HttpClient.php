@@ -2,6 +2,10 @@
 
 namespace perf\Http\Client;
 
+use perf\Http\Curl\CurlExecuter;
+use perf\Http\Curl\CurlExecutionException;
+use perf\Http\Curl\CurlExecutionResult;
+
 /**
  *
  *

@@ -2,6 +2,8 @@
 
 namespace perf\Http\Client;
 
+use perf\Http\Curl\CurlExecuter;
+
 /**
  *
  *
@@ -34,7 +36,7 @@ class HttpClientBuilder
      *
      *
      * @param HttpRequestFactory $factory
-     * @return HttpBuilder Fluent return.
+     * @return HttpClientBuilder Fluent return.
      */
     public function setRequestFactory(HttpRequestFactory $factory)
     {
@@ -47,7 +49,7 @@ class HttpClientBuilder
      *
      *
      * @param HttpResponseFactory $factory
-     * @return HttpBuilder Fluent return.
+     * @return HttpClientBuilder Fluent return.
      */
     public function setResponseFactory(HttpResponseFactory $factory)
     {
@@ -60,7 +62,7 @@ class HttpClientBuilder
      *
      *
      * @param CurlExecuter $curlExecuter
-     * @return HttpBuilder Fluent return.
+     * @return HttpClientBuilder Fluent return.
      */
     public function setCurlExecuter(CurlExecuter $executer)
     {
@@ -91,9 +93,7 @@ class HttpClientBuilder
         if ($this->curlExecuter) {
             $curlExecuter = $this->curlExecuter;
         } else {
-            $curlWrapperFactory = new CurlWrapperFactory();
-
-            $curlExecuter = new CurlExecuter($curlWrapperFactory);
+            $curlExecuter = CurlExecuter::createDefault();
         }
 
         return new HttpClient($requestFactory, $responseFactory, $curlExecuter);

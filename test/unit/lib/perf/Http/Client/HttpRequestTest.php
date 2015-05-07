@@ -11,16 +11,6 @@ class HttpRequestTest extends \PHPUnit_Framework_TestCase
     /**
      *
      */
-    public static function setUpBeforeClass()
-    {
-        if (!defined('CURLOPT_URL')) {
-            define('CURLOPT_URL', 'CURLOPT_URL');
-        }
-    }
-
-    /**
-     *
-     */
     public function testGetOptionsWillReturnArray()
     {
         $request = new HttpRequest();
