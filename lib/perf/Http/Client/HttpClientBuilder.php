@@ -2,7 +2,7 @@
 
 namespace perf\Http\Client;
 
-use perf\Http\Curl\CurlExecuter;
+use perf\Http\Curl\CurlClient;
 
 /**
  *
@@ -28,9 +28,9 @@ class HttpClientBuilder
     /**
      *
      *
-     * @var CurlExecuter
+     * @var CurlClient
      */
-    private $curlExecuter;
+    private $curlClient;
 
     /**
      *
@@ -61,12 +61,12 @@ class HttpClientBuilder
     /**
      *
      *
-     * @param CurlExecuter $curlExecuter
+     * @param CurlClient $client
      * @return HttpClientBuilder Fluent return.
      */
-    public function setCurlExecuter(CurlExecuter $executer)
+    public function setCurlClient(CurlClient $client)
     {
-        $this->curlExecuter = $executer;
+        $this->curlClient = $client;
 
         return $this;
     }
@@ -90,12 +90,12 @@ class HttpClientBuilder
             $responseFactory = new HttpResponseFactory();
         }
 
-        if ($this->curlExecuter) {
-            $curlExecuter = $this->curlExecuter;
+        if ($this->curlClient) {
+            $curlClient = $this->curlClient;
         } else {
-            $curlExecuter = CurlExecuter::createDefault();
+            $curlClient = CurlClient::createDefault();
         }
 
-        return new HttpClient($requestFactory, $responseFactory, $curlExecuter);
+        return new HttpClient($requestFactory, $responseFactory, $curlClient);
     }
 }

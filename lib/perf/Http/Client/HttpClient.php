@@ -2,7 +2,7 @@
 
 namespace perf\Http\Client;
 
-use perf\Http\Curl\CurlExecuter;
+use perf\Http\Curl\CurlClient;
 use perf\Http\Curl\CurlExecutionException;
 use perf\Http\Curl\CurlExecutionResult;
 
@@ -30,9 +30,9 @@ class HttpClient
     /**
      *
      *
-     * @var CurlExecuter
+     * @var CurlClient
      */
-    private $curlExecuter;
+    private $curlClient;
 
     /**
      *
@@ -59,17 +59,17 @@ class HttpClient
      *
      * @param HttpRequestFactory $requestFactory
      * @param HttpResponseFactory $responseFactory
-     * @param CurlExecuter $curlExecuter
+     * @param CurlClient $curlClient
      * @return void
      */
     public function __construct(
         HttpRequestFactory $requestFactory,
         HttpResponseFactory $responseFactory,
-        CurlExecuter $curlExecuter
+        CurlClient $curlClient
     ) {
         $this->requestFactory  = $requestFactory;
         $this->responseFactory = $responseFactory;
-        $this->curlExecuter    = $curlExecuter;
+        $this->curlClient      = $curlClient;
     }
 
     /**
@@ -136,7 +136,7 @@ class HttpClient
         $options[\CURLOPT_RETURNTRANSFER] = true;
     
         try {
-            $result = $this->curlExecuter->execute($options);
+            $result = $this->curlClient->execute($options);
         } catch (CurlExecutionException $e) {
             throw new \RuntimeException("Failed to execute HTTP request. << {$e->getMessage()}", 0, $e);
         }
