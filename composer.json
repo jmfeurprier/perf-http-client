@@ -4,8 +4,8 @@
 	"license"     : "MIT",
 	"description" : "Allows to execute HTTP queries.",
 	"require"     : {
-		"php"            : ">=5.3.3",
-		"perf/http-curl" : "dev-master"
+		"php"              : ">=5.3.3",
+		"perf/curl-client" : "~1.0"
 	},
 	"require-dev": {
 		"ext-xdebug"                : "~2.1",
