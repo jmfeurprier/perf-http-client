@@ -37,6 +37,34 @@ $request
 
 $response = $httpClient->execute($request);
 
-$content = $response->getBodyContent();
+$httpStatusCode = $response->getHttpStatusCode();
+$content        = $response->getBodyContent();
+
+```
+
+### Simple POST request
+
+```php
+<?php
+
+use perf\Http\Client\HttpClient;
+
+$httpClient = HttpClient::createDefault();
+
+$request = $httpClient->createRequest();
+$request
+    ->methodPost(
+        array(
+            'title'   => 'test article',
+            'content' => 'article content ...',
+    	)
+    )
+    ->setUrl('http://localhost/create-article.php')
+;
+
+$response = $httpClient->execute($request);
+
+$httpStatusCode = $response->getHttpStatusCode();
+$content        = $response->getBodyContent();
 
 ```
