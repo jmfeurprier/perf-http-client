@@ -58,13 +58,16 @@ class HttpClientTest extends \PHPUnit_Framework_TestCase
             \CURLOPT_RETURNTRANSFER => true,
         );
 
+        $transferDetails = array();
+
         $curlExecutionResult = $this->getMockBuilder('\\perf\\Http\\Curl\\CurlExecutionResult')->disableOriginalConstructor()->getMock();
+        $curlExecutionResult->expects($this->once())->method('getInfos')->will($this->returnValue($transferDetails));
 
         $this->curlClient->expects($this->once())->method('execute')->with($expectedOptions)->will($this->returnValue($curlExecutionResult));
 
         $response = $this->getMockBuilder('\\perf\\Http\\Client\\HttpResponse')->disableOriginalConstructor()->getMock();
 
-        $this->responseFactory->expects($this->once())->method('create')->with($this->anything(), $this->anything(), $this->anything())->will($this->returnValue($response));
+        $this->responseFactory->expects($this->once())->method('create')->will($this->returnValue($response));
 
         $result = $this->client->execute($request);
 

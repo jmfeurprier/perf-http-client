@@ -93,7 +93,7 @@ class HttpClient
     {
         $result = $this->getResult($request);
 
-        $httpStatus = $result->getInfo('http_code');
+        $httpStatusCode = $result->getInfo('http_code');
 
         $options    = $request->getOptions();
         $withHeader = (array_key_exists(\CURLOPT_HEADER, $options) && $options[\CURLOPT_HEADER]);
@@ -120,7 +120,7 @@ class HttpClient
             $bodyContent = $result->getResponseContent();
         }
 
-        return $this->responseFactory->create($httpStatus, $headers, $bodyContent);
+        return $this->responseFactory->create($httpStatusCode, $headers, $bodyContent, $result->getInfos());
     }
 
     /**
