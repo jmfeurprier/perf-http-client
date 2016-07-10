@@ -123,6 +123,26 @@ class HttpRequest
     /**
      *
      *
+     * @param string $file
+     * @return Request Fluent return.
+     * @throws \RuntimeException
+     */
+    public function downloadTo($file)
+    {
+        $fileResource = fopen($file, 'w');
+
+        if (false === $fileResource) {
+            throw new \RuntimeException('Failed to open destination file for download.');
+        }
+
+        $this->setOption(\CURLOPT_FILE, $fileResource);
+
+        return $this;
+    }
+
+    /**
+     *
+     *
      * @param int $timeout
      * @return HttpRequest Fluent return.
      */

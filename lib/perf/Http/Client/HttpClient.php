@@ -91,33 +91,33 @@ class HttpClient
      */
     public function execute(HttpRequest $request)
     {
-        $result = $this->getResult($request);
-
+        $result         = $this->getResult($request);
         $httpStatusCode = $result->getInfo('http_code');
+        $options        = $request->getOptions();
+        $headers        = array();
+        $bodyContent    = '';
 
-        $options    = $request->getOptions();
-        $withHeader = (array_key_exists(\CURLOPT_HEADER, $options) && $options[\CURLOPT_HEADER]);
-        $withBody   = !(array_key_exists(\CURLOPT_NOBODY, $options) && $options[\CURLOPT_NOBODY]);
+        if (!$this->isDownload($request)) {
+            $withHeader = (array_key_exists(\CURLOPT_HEADER, $options) && $options[\CURLOPT_HEADER]);
+            $withBody   = !(array_key_exists(\CURLOPT_NOBODY, $options) && $options[\CURLOPT_NOBODY]);
 
-        $headers     = array();
-        $bodyContent = '';
-
-        if ($withHeader && $withBody) {
-            $responseContent = $result->getResponseContent();
-            $position = strpos($responseContent, "\r\n\r\n", 0);
-            
-            if (false === $position) {
-                throw new \RuntimeException();
+            if ($withHeader && $withBody) {
+                $responseContent = $result->getResponseContent();
+                $position = strpos($responseContent, "\r\n\r\n", 0);
+                
+                if (false === $position) {
+                    throw new \RuntimeException('Failed to find end of response headers.');
+                }
+                
+                $headerContent = substr($responseContent, 0, $position);
+                $headers       = explode("\r\n", $headerContent);
+                $bodyContent   = substr($responseContent, $position + 4);
+            } elseif ($withHeader) {
+                $headerContent = $result->getResponseContent();
+                $headers       = explode("\r\n", $headerContent);
+            } elseif ($withBody) {
+                $bodyContent = $result->getResponseContent();
             }
-            
-            $headerContent = substr($responseContent, 0, $position);
-            $headers       = explode("\r\n", $headerContent);
-            $bodyContent   = substr($responseContent, $position + 4);
-        } elseif ($withHeader) {
-            $headerContent = $result->getResponseContent();
-            $headers       = explode("\r\n", $headerContent);
-        } elseif ($withBody) {
-            $bodyContent = $result->getResponseContent();
         }
 
         return $this->responseFactory->create($httpStatusCode, $headers, $bodyContent, $result->getInfos());
@@ -133,7 +133,13 @@ class HttpClient
     private function getResult(HttpRequest $request)
     {
         $options = $request->getOptions();
-        $options[\CURLOPT_RETURNTRANSFER] = true;
+
+        if ($this->isDownload($request)) {
+            $options[\CURLOPT_HEADER] = false;
+            $options[\CURLOPT_NOBODY] = false;
+        } else {
+            $options[\CURLOPT_RETURNTRANSFER] = true;
+        }
     
         try {
             $result = $this->curlClient->execute($options);
@@ -142,5 +148,18 @@ class HttpClient
         }
 
         return $result;
+    }
+
+    /**
+     *
+     *
+     * @param HttpRequest $request
+     * @return bool
+     */
+    private function isDownload(HttpRequest $request)
+    {
+        $options = $request->getOptions();
+
+        return (array_key_exists(\CURLOPT_FILE, $options) && is_resource($options[\CURLOPT_FILE]));
     }
 }
