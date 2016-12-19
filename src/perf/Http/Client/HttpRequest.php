@@ -59,7 +59,7 @@ class HttpRequest
         $this->unsetOption(\CURLOPT_HTTPGET);
 
         $this->setOption(\CURLOPT_POST, true);
-        $this->setOption(\CURLOPT_POSTFIELDS, http_build_query($values));
+        $this->setOption(\CURLOPT_POSTFIELDS, $values);
 
         return $this;
     }
@@ -84,15 +84,20 @@ class HttpRequest
     /**
      *
      *
+     * @param {string:mixed} $values
      * @return HttpRequest Fluent return.
      */
-    public function methodDelete()
+    public function methodDelete(array $values = array())
     {
         $this->unsetOption(\CURLOPT_HTTPGET);
         $this->unsetOption(\CURLOPT_POST);
         $this->unsetOption(\CURLOPT_POSTFIELDS);
 
         $this->setOption(\CURLOPT_CUSTOMREQUEST, 'DELETE');
+
+        if (!empty($values)) {
+            $this->setOption(\CURLOPT_POSTFIELDS, http_build_query($values));
+        }
 
         return $this;
     }
@@ -108,13 +113,12 @@ class HttpRequest
     {
         $this->unsetOption(\CURLOPT_HTTPGET);
         $this->unsetOption(\CURLOPT_POST);
+        $this->unsetOption(\CURLOPT_POSTFIELDS);
 
         $this->setOption(\CURLOPT_CUSTOMREQUEST, $method);
 
-        if (count($values) > 0) {
+        if (!empty($values)) {
             $this->setOption(\CURLOPT_POSTFIELDS, http_build_query($values));
-        } else {
-            $this->unsetOption(\CURLOPT_POSTFIELDS);
         }
 
         return $this;
@@ -124,7 +128,7 @@ class HttpRequest
      *
      *
      * @param string $file
-     * @return Request Fluent return.
+     * @return HttpRequest Fluent return.
      * @throws \RuntimeException
      */
     public function downloadTo($file)

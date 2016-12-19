@@ -32,7 +32,7 @@ class HttpClientTest extends \PHPUnit_Framework_TestCase
     {
         $request = $this->getMock('\\perf\\Http\\Client\\HttpRequest');
 
-        $this->requestFactory->expects($this->once())->method('create')->will($this->returnValue($request));
+        $this->requestFactory->expects($this->once())->method('create')->willReturn($request);
 
         $result = $this->client->createRequest();
 
@@ -51,7 +51,7 @@ class HttpClientTest extends \PHPUnit_Framework_TestCase
         );
 
         $request = $this->getMock('\\perf\\Http\\Client\\HttpRequest');
-        $request->expects($this->atLeastOnce())->method('getOptions')->will($this->returnValue($options));
+        $request->expects($this->atLeastOnce())->method('getOptions')->willReturn($options);
 
         $expectedOptions = array(
             \CURLOPT_URL            => 'bar',
@@ -60,14 +60,25 @@ class HttpClientTest extends \PHPUnit_Framework_TestCase
 
         $transferDetails = array();
 
-        $curlExecutionResult = $this->getMockBuilder('\\perf\\Http\\Curl\\CurlExecutionResult')->disableOriginalConstructor()->getMock();
-        $curlExecutionResult->expects($this->once())->method('getInfos')->will($this->returnValue($transferDetails));
+        $curlExecutionResult = $this->getMockBuilder('\\perf\\Http\\Curl\\CurlExecutionResult')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+        $curlExecutionResult->expects($this->once())->method('getInfos')->willReturn($transferDetails);
 
-        $this->curlClient->expects($this->once())->method('execute')->with($expectedOptions)->will($this->returnValue($curlExecutionResult));
+        $this->curlClient
+            ->expects($this->once())
+            ->method('execute')
+            ->with($expectedOptions)
+            ->willReturn($curlExecutionResult)
+        ;
 
-        $response = $this->getMockBuilder('\\perf\\Http\\Client\\HttpResponse')->disableOriginalConstructor()->getMock();
+        $response = $this->getMockBuilder('\\perf\\Http\\Client\\HttpResponse')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
 
-        $this->responseFactory->expects($this->once())->method('create')->will($this->returnValue($response));
+        $this->responseFactory->expects($this->once())->method('create')->willReturn($response);
 
         $result = $this->client->execute($request);
 
@@ -89,12 +100,20 @@ class HttpClientTest extends \PHPUnit_Framework_TestCase
             \CURLOPT_RETURNTRANSFER => true,
         );
 
-        $exception = $this->getMockBuilder('\\perf\\Http\\Curl\\CurlExecutionException')->disableOriginalConstructor()->getMock();
+        $exception = $this->getMockBuilder('\\perf\\Http\\Curl\\CurlExecutionException')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
 
-        $this->curlClient->expects($this->once())->method('execute')->with($this->equalTo($expectedOptions))->will($this->throwException($exception));
+        $this->curlClient
+            ->expects($this->once())
+            ->method('execute')
+            ->with($this->equalTo($expectedOptions))
+            ->willThrowException($exception)
+        ;
 
         $request = $this->getMock('\\perf\\Http\\Client\\HttpRequest');
-        $request->expects($this->atLeastOnce())->method('getOptions')->will($this->returnValue($options));
+        $request->expects($this->atLeastOnce())->method('getOptions')->willReturn($options);
 
         $this->setExpectedException('\\RuntimeException');
 

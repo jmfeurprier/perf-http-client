@@ -85,6 +85,19 @@ class HttpClient
     /**
      *
      *
+     * @param string $filename
+     * @param string $mimeType
+     * @param string $postFilename
+     * @return \CURLFile
+     */
+    public function createFile($filename, $mimeType = '', $postFilename = '')
+    {
+        return $this->curlClient->createFile($filename, $mimeType, $postFilename);
+    }
+
+    /**
+     *
+     *
      * @param HttpRequest $request
      * @return HttpResponse
      * @throws \RuntimeException

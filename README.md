@@ -57,7 +57,8 @@ $request
         array(
             'title'   => 'test article',
             'content' => 'article content ...',
-    	)
+	    'photo'   => $httpClient->createFile('/path/to/file.jpg')
+        )
     )
     ->setUrl('http://localhost/create-article.php')
 ;
