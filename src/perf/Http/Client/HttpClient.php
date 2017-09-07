@@ -116,15 +116,10 @@ class HttpClient
 
             if ($withHeader && $withBody) {
                 $responseContent = $result->getResponseContent();
-                $position = strpos($responseContent, "\r\n\r\n", 0);
-                
-                if (false === $position) {
-                    throw new \RuntimeException('Failed to find end of response headers.');
-                }
-                
-                $headerContent = substr($responseContent, 0, $position);
-                $headers       = explode("\r\n", $headerContent);
-                $bodyContent   = substr($responseContent, $position + 4);
+                $position        = $result->getInfo('header_size');
+                $headerContent   = substr($responseContent, 0, $position);
+                $headers         = preg_split('|\\r\\n|', $headerContent, -1, \PREG_SPLIT_NO_EMPTY);
+                $bodyContent     = substr($responseContent, $position);
             } elseif ($withHeader) {
                 $headerContent = $result->getResponseContent();
                 $headers       = explode("\r\n", $headerContent);
