@@ -9,13 +9,8 @@ There are no dependencies on other libraries.
 
 Install with [Composer](http://getcomposer.org):
 
-```json
-{
-	"require":
-	{
-		"perf-http-client" : "~1.0"
-	}
-}
+```shell script
+composer require perf/http-client
 ```
 
 ## Usage
@@ -25,7 +20,7 @@ Install with [Composer](http://getcomposer.org):
 ```php
 <?php
 
-use perf\Http\Client\HttpClient;
+use perf\HttpClient\HttpClient;
 
 $httpClient = HttpClient::createDefault();
 
@@ -47,18 +42,18 @@ $content        = $response->getBodyContent();
 ```php
 <?php
 
-use perf\Http\Client\HttpClient;
+use perf\HttpClient\HttpClient;
 
 $httpClient = HttpClient::createDefault();
 
 $request = $httpClient->createRequest();
 $request
     ->methodPost(
-        array(
+        [
             'title'   => 'test article',
             'content' => 'article content ...',
             'photo'   => $httpClient->createFile('/path/to/file.jpg')
-        )
+        ]
     )
     ->setUrl('http://localhost/create-article.php')
 ;

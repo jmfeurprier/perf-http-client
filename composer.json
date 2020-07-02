@@ -4,20 +4,20 @@
 	"license"     : "MIT",
 	"description" : "Allows to execute HTTP queries.",
 	"require"     : {
-		"php"              : ">=5.3.3",
-		"perf/curl-client" : ">=1.0.2"
+		"php"              : ">=7.4.0",
+		"ext-curl"         : "*",
+		"perf/curl-client" : "^2.0"
 	},
 	"require-dev": {
-		"ext-xdebug"                : "^2.1.0",
-		"phing/phing"               : "^2.0.0",
-		"phpmd/phpmd"               : "^2.0.0",
-		"phpunit/phpunit"           : "^4.0.0",
-		"sebastian/phpcpd"          : "^2.0.0",
-		"squizlabs/php_codesniffer" : "^2.0.0"
+		"ext-xdebug"                : "*",
+		"phing/phing"               : "^2.16",
+		"phpmd/phpmd"               : "^2.8",
+		"phpunit/phpunit"           : "^9.2",
+		"squizlabs/php_codesniffer" : "^3.5"
 	},
 	"autoload" : {
 		"psr-4" : {
-			"perf\\Http\\Client\\" : "src/perf/Http/Client/"
+			"perf\\HttpClient\\" : "src/"
 		}
 	}
 }

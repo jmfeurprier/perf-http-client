@@ -1,67 +1,31 @@
 <?php
 
-namespace perf\Http\Client;
+namespace perf\HttpClient;
 
-use perf\Http\Curl\CurlClient;
-use perf\Http\Curl\CurlExecutionException;
-use perf\Http\Curl\CurlExecutionResult;
+use CURLFile;
+use perf\CurlClient\CurlClient;
+use perf\CurlClient\CurlExecutionResult;
+use perf\CurlClient\Exception\CurlExecutionException;
+use perf\HttpClient\Exception\HttpClientException;
 
-/**
- *
- *
- */
-class HttpClient
+class HttpClient implements HttpClientInterface
 {
+    private HttpRequestFactory $requestFactory;
 
-    /**
-     *
-     *
-     * @var HttpRequestFactory
-     */
-    private $requestFactory;
+    private HttpResponseFactory $responseFactory;
 
-    /**
-     *
-     *
-     * @var HttpResponseFactory
-     */
-    private $responseFactory;
+    private CurlClient $curlClient;
 
-    /**
-     *
-     *
-     * @var CurlClient
-     */
-    private $curlClient;
-
-    /**
-     *
-     *
-     * @return HttpClient
-     */
-    public static function createDefault()
+    public static function createDefault(): HttpClient
     {
         return self::createBuilder()->build();
     }
 
-    /**
-     *
-     *
-     * @return HttpClientBuilder
-     */
-    public static function createBuilder()
+    public static function createBuilder(): HttpClientBuilder
     {
         return new HttpClientBuilder();
     }
 
-    /**
-     * Constructor.
-     *
-     * @param HttpRequestFactory $requestFactory
-     * @param HttpResponseFactory $responseFactory
-     * @param CurlClient $curlClient
-     * @return void
-     */
     public function __construct(
         HttpRequestFactory $requestFactory,
         HttpResponseFactory $responseFactory,
@@ -72,42 +36,29 @@ class HttpClient
         $this->curlClient      = $curlClient;
     }
 
-    /**
-     *
-     *
-     * @return HttpRequest
-     */
-    public function createRequest()
+    public function createRequest(): HttpRequest
     {
         return $this->requestFactory->create();
     }
 
-    /**
-     *
-     *
-     * @param string $filename
-     * @param string $mimeType
-     * @param string $postFilename
-     * @return \CURLFile
-     */
-    public function createFile($filename, $mimeType = '', $postFilename = '')
+    public function createFile(string $filename, string $mimeType = '', string $postFilename = ''): CURLFile
     {
         return $this->curlClient->createFile($filename, $mimeType, $postFilename);
     }
 
     /**
-     *
-     *
      * @param HttpRequest $request
+     *
      * @return HttpResponse
-     * @throws \RuntimeException
+     *
+     * @throws HttpClientException
      */
-    public function execute(HttpRequest $request)
+    public function execute(HttpRequest $request): HttpResponse
     {
         $result         = $this->getResult($request);
         $httpStatusCode = $result->getInfo('http_code');
         $options        = $request->getOptions();
-        $headers        = array();
+        $headers        = [];
         $bodyContent    = '';
 
         if (!$this->isDownload($request)) {
@@ -132,13 +83,13 @@ class HttpClient
     }
 
     /**
-     *
-     *
      * @param HttpRequest $request
+     *
      * @return CurlExecutionResult
-     * @throws \RuntimeException
+     *
+     * @throws HttpClientException
      */
-    private function getResult(HttpRequest $request)
+    private function getResult(HttpRequest $request): CurlExecutionResult
     {
         $options = $request->getOptions();
 
@@ -152,19 +103,13 @@ class HttpClient
         try {
             $result = $this->curlClient->execute($options);
         } catch (CurlExecutionException $e) {
-            throw new \RuntimeException("Failed to execute HTTP request. << {$e->getMessage()}", 0, $e);
+            throw new HttpClientException("Failed to execute HTTP request. << {$e->getMessage()}", 0, $e);
         }
 
         return $result;
     }
 
-    /**
-     *
-     *
-     * @param HttpRequest $request
-     * @return bool
-     */
-    private function isDownload(HttpRequest $request)
+    private function isDownload(HttpRequest $request): bool
     {
         $options = $request->getOptions();
 

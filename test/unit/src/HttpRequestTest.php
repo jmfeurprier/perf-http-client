@@ -1,28 +1,20 @@
 <?php
 
-namespace perf\Http\Client;
+namespace perf\HttpClient;
 
-/**
- *
- */
-class HttpRequestTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class HttpRequestTest extends TestCase
 {
-
-    /**
-     *
-     */
     public function testGetOptionsWillReturnArray()
     {
         $request = new HttpRequest();
 
         $result = $request->getOptions();
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
     }
 
-    /**
-     *
-     */
     public function testGetOptionsWithOptionSetThroughSetOptionWillReturnOptionValue()
     {
         $option = 123;
@@ -34,15 +26,12 @@ class HttpRequestTest extends \PHPUnit_Framework_TestCase
 
         $result = $request->getOptions();
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey($option, $result);
 
         $this->assertSame($value, $result[$option]);
     }
 
-    /**
-     *
-     */
     public function testGetOptionsWillReturnValueFromSetUrl()
     {
         $url = 'foo';

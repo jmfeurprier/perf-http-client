@@ -1,24 +1,19 @@
 <?php
 
-namespace perf\Http\Client;
+namespace perf\HttpClient;
 
-/**
- *
- */
-class HttpResponseTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class HttpResponseTest extends TestCase
 {
-
-    /**
-     *
-     */
     public function testGethttpStatusCodeWillReturnValueProvidedToConstructor()
     {
         $httpStatusCode = 123;
-        $headers        = array(
+        $headers        = [
             'foo',
             'bar',
-        );
-        $bodyContent = 'baz';
+        ];
+        $bodyContent    = 'baz';
 
         $response = new HttpResponse($httpStatusCode, $headers, $bodyContent);
 
@@ -33,11 +28,11 @@ class HttpResponseTest extends \PHPUnit_Framework_TestCase
     public function testGetUrlWillReturnValueProvidedToConstructor()
     {
         $httpStatusCode = 123;
-        $headers        = array(
+        $headers        = [
             'foo',
             'bar',
-        );
-        $bodyContent = 'baz';
+        ];
+        $bodyContent    = 'baz';
 
         $response = new HttpResponse($httpStatusCode, $headers, $bodyContent);
 
@@ -52,11 +47,11 @@ class HttpResponseTest extends \PHPUnit_Framework_TestCase
     public function testGetBodyContentWillReturnValueProvidedToConstructor()
     {
         $httpStatusCode = 123;
-        $headers        = array(
+        $headers        = [
             'foo',
             'bar',
-        );
-        $bodyContent = 'baz';
+        ];
+        $bodyContent    = 'baz';
 
         $response = new HttpResponse($httpStatusCode, $headers, $bodyContent);
 
